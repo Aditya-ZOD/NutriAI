@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriAI — Nutrition Intelligence Platform</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ======================================================================
+       HEADER / NAVBAR
+       ====================================================================== -->
+  <header class="navbar">
+    <div class="logo">
+      Nutri<span>.ai</span><sup>®</sup>
+    </div>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#heroLanding" class="nav-item">Home</a>
+      <a href="#features" class="nav-item">Features</a>
+      <a href="#faq" class="nav-item">FAQ</a>
+      <a href="users.html" class="nav-item" title="Admin directory">Users (Admin)</a>
+    </nav>
+
+    <div class="nav-actions">
+      <!-- Guest Navigation Actions -->
+      <div id="guestNavActions" style="display: flex; gap: 0.75rem;">
+        <button class="btn-secondary" onclick="openAuth('login')">Login</button>
+        <button class="btn-primary" onclick="openAuth('signup')">Sign Up Free ✨</button>
+      </div>
+
+      <!-- Authenticated Navigation Actions -->
+      <div id="authNavActions" style="display: none; align-items: center; gap: 1rem;">
+        <div class="user-badge">
+          <div class="user-avatar">👤</div>
+          <span>Hi, <strong id="navUserName">User</strong></span>
+        </div>
+        <button class="btn-secondary" onclick="handleLogout()">Logout</button>
+      </div>
+
+      <button class="menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation">☰</button>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       HERO & LANDING SECTION (Visible when logged out)
+       ====================================================================== -->
+  <main>
+    <section class="hero" id="heroLanding">
+      <div class="hero-left">
+        <div class="tag">🤖 Local AI Nutrition Intelligence</div>
+        <h1>
+          Smarter Nutrition <br />
+          <span>Powered by AI</span> <br />
+          Built for Your Life
+        </h1>
+        <p class="desc">
+          Personalized meal planning, intelligent macro tracking, and comprehensive Indian & global food intelligence. Powered by private, local AI models.
+        </p>
+
+        <div class="hero-buttons">
+          <button class="btn-primary" onclick="openAuth('signup')">Start Free Consultation ✨</button>
+          <button class="btn-secondary" onclick="openAuth('login')">Sign In to Dashboard</button>
+        </div>
+
+        <div class="hero-perks">
+          <div class="hero-perk-item">✓ Zero Cloud AI Fees</div>
+          <div class="hero-perk-item">✓ Indian Regional Foods</div>
+          <div class="hero-perk-item">✓ Private & Secure</div>
+        </div>
+      </div>
+
+      <!-- Hero Right: Interactive AI Assistant Preview -->
+      <div class="hero-right">
+        <div class="chat-preview-card">
+          <div class="card-header-bar">
+            <div class="bot-info">
+              <span class="status-dot"></span>
+              <div>
+                <strong>NutriAI Guide</strong>
+                <small style="display: block; color: var(--text-dim); font-size: 0.75rem;">Local Ollama Engine</small>
+              </div>
+            </div>
+            <span style="font-size: 1.2rem;">🤖</span>
+          </div>
+
+          <div class="preview-chat-body" id="heroChatBody">
+            <div class="chat-bubble bot">
+              Hello! I'm NutriAI, your personalized nutrition guide. Tell me your health goal (fat loss, muscle gain, balanced eating) or ask about meal recommendations!
+            </div>
+          </div>
+
+          <div style="padding: 0 1rem;">
+            <div class="quick-prompts">
+              <button onclick="quickHeroReply('High protein Indian vegetarian lunch ideas')">🥗 Indian Veg Lunch</button>
+              <button onclick="quickHeroReply('Weight loss plan for a 25 year old male, 78kg')">🎯 Weight Loss Plan</button>
+              <button onclick="quickHeroReply('Healthy evening snacks under 200 calories')">☕ Low Calorie Snacks</button>
+            </div>
+          </div>
+
+          <div class="card-input-bar">
+            <input type="text" id="heroChatInput" placeholder="Ask NutriAI anything..." />
+            <button class="send-circle-btn" onclick="sendHeroMessage()" title="Send Message">➤</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Marketing / Features Section -->
+    <section id="features" style="max-width: 1200px; margin: 3rem auto 5rem; padding: 0 2rem;">
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <span class="tag" style="display: inline-block; padding: 0.3rem 0.8rem; background: rgba(16,185,129,0.1); color: var(--color-primary); border-radius: 999px; font-size: 0.85rem; font-weight: 600;">✨ Complete Nutrition Intelligence</span>
+        <h2 style="font-size: 2.25rem; font-weight: 800; margin-top: 0.75rem;">Everything you need for sustainable health</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
+        <div class="dash-card">
+          <div style="font-size: 2rem; margin-bottom: 0.75rem;">🍛</div>
+          <h3 style="margin-bottom: 0.5rem;">Indian Food Database</h3>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">Verified nutrient data for rotis, dals, paneer, brown rice, idli, sambhar, khichdi, and regional Indian dishes.</p>
+        </div>
+
+        <div class="dash-card">
+          <div style="font-size: 2rem; margin-bottom: 0.75rem;">🤖</div>
+          <h3 style="margin-bottom: 0.5rem;">Context-Aware AI</h3>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">Ollama-powered nutritionist that remembers your dietary goals, allergies, and preference without asking twice.</p>
+        </div>
+
+        <div class="dash-card">
+          <div style="font-size: 2rem; margin-bottom: 0.75rem;">📊</div>
+          <h3 style="margin-bottom: 0.5rem;">Real Macro Tracking</h3>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">Track calories, protein, carbs, and fat with real database calculations instead of arbitrary estimates.</p>
+        </div>
+
+        <div class="dash-card">
+          <div style="font-size: 2rem; margin-bottom: 0.75rem;">🔒</div>
+          <h3 style="margin-bottom: 0.5rem;">Private & Secure</h3>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">Argon2 password encryption, tokenized sessions, and 100% user data isolation stored safely in your database.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" style="max-width: 900px; margin: 0 auto 5rem; padding: 0 2rem;">
+      <div style="text-align: center; margin-bottom: 2.5rem;">
+        <h2 style="font-size: 2rem; font-weight: 800;">Frequently Asked Questions</h2>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="dash-card" style="padding: 1.25rem;">
+          <h4 style="color: var(--color-primary); margin-bottom: 0.4rem;">What models does NutriAI support?</h4>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">NutriAI runs on locally hosted Ollama models like <code>llama3.2:3b</code> and <code>qwen3:8b</code> with zero cloud API keys required.</p>
+        </div>
+        <div class="dash-card" style="padding: 1.25rem;">
+          <h4 style="color: var(--color-primary); margin-bottom: 0.4rem;">Are the nutritional values clinically accurate?</h4>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">Logged meals use verified standard composition datasets. AI recommendations are calibrated nutritional estimates intended for healthy lifestyle guidance.</p>
+        </div>
+        <div class="dash-card" style="padding: 1.25rem;">
+          <h4 style="color: var(--color-primary); margin-bottom: 0.4rem;">Can I save custom diet plans?</h4>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">Yes! Any structured diet plan generated by the AI nutritionist can be saved directly to your dashboard with one click.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         AUTHENTICATED WORKSPACE (Visible when logged in)
+         ====================================================================== -->
+    <div id="appWorkspace" style="display: none;">
+
+      <!-- Workspace Navigation Tabs -->
+      <nav class="workspace-nav-tabs" role="tablist">
+        <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">📊 Dashboard</button>
+        <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')">🤖 AI Nutritionist</button>
+        <button class="tab-btn" data-tab="meals" onclick="switchTab('meals')">🥗 Meals Tracker</button>
+        <button class="tab-btn" data-tab="progress" onclick="switchTab('progress')">💧 Water & Weight</button>
+        <button class="tab-btn" data-tab="profile" onclick="switchTab('profile')">⚙️ Profile & Targets</button>
+      </nav>
+
+      <!-- TAB 1: DASHBOARD -->
+      <section class="tab-content active" id="tab-dashboard">
+        <div class="dashboard-summary-grid">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">🔥 Daily Calories</span>
+              <span class="dash-card-icon">⚡</span>
+            </div>
+            <div class="dash-card-value" id="dashCalories">0</div>
+            <div class="dash-card-sub" id="dashCalorieTarget">Target: 2,000 kcal</div>
+            <div class="progress-track">
+              <div class="progress-fill" id="dashCalorieBar" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">💧 Water Intake</span>
+              <span class="dash-card-icon">🌊</span>
+            </div>
+            <div class="dash-card-value" id="dashWater">0 / 10</div>
+            <div class="dash-card-sub" id="dashWaterSub">0 ml of 2500 ml target</div>
+            <div class="progress-track">
+              <div class="progress-fill water" id="dashWaterBar" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">🎯 Active Goal</span>
+              <span class="dash-card-icon">🏆</span>
+            </div>
+            <div class="dash-card-value" id="dashGoal" style="font-size: 1.75rem;">Healthy Lifestyle</div>
+            <div class="dash-card-sub">Stay consistent with daily balanced meals</div>
+            <button class="btn-secondary" style="padding: 0.35rem 0.8rem; font-size: 0.8rem; align-self: flex-start;" onclick="switchTab('profile')">Edit Goal</button>
+          </div>
+
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">🥩 Macronutrients</span>
+              <span class="dash-card-icon">🥑</span>
+            </div>
+            <div class="macros-bar">
+              <div class="macro-pill"><span class="macro-dot p"></span> Protein: <strong id="macroProtein">0g</strong></div>
+              <div class="macro-pill"><span class="macro-dot c"></span> Carbs: <strong id="macroCarbs">0g</strong></div>
+              <div class="macro-pill"><span class="macro-dot f"></span> Fat: <strong id="macroFat">0g</strong></div>
+            </div>
+            <div class="dash-card-sub" style="margin-top: 1rem;">Calculated from logged foods</div>
+          </div>
+        </div>
+
+        <div class="dashboard-split-view">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">🥗 Logged Meals Summary</span>
+              <button class="btn-primary" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;" onclick="switchTab('meals')">+ Log a Meal</button>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 1rem;">View and manage your breakfast, lunch, dinner, and snack entries in the Meals Tracker tab.</p>
+            <button class="btn-secondary" onclick="switchTab('meals')">Open Full Meals Tracker →</button>
+          </div>
+
+          <div class="dash-card" id="dashPlanCard">
+            <!-- Populated dynamically with saved plan -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: AI NUTRITIONIST CHAT -->
+      <section class="tab-content" id="tab-chat">
+        <div class="chat-workspace-layout">
+          <!-- Left Sidebar -->
+          <aside class="chat-sidebar">
+            <div>
+              <button class="new-chat-action-btn" onclick="handleNewConversation()">+ New Consultation</button>
+              <div class="conv-list-header">Your Consultations</div>
+              <div class="conv-list" id="conversationsList"></div>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-dim); text-align: center; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+              Local Ollama Nutrition Agent
+            </div>
+          </aside>
+
+          <!-- Center Chat Area -->
+          <div class="chat-main-area">
+            <div class="chat-top-header">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span class="status-dot"></span>
+                <strong>AI Nutritionist & Diet Guide</strong>
+              </div>
+              <small style="color: var(--text-dim);">Evidence-based nutritional suggestions</small>
+            </div>
+
+            <div class="chat-messages-container" id="chatMessages">
+              <div class="empty-state">
+                <div class="empty-state-icon">🤖</div>
+                <h3>Your AI Nutritionist is Ready</h3>
+                <p>Start a new consultation to get personalized meal plans and nutrition answers.</p>
+              </div>
+            </div>
+
+            <div class="chat-bottom-input-bar">
+              <input type="text" id="chatInput" placeholder="Ask NutriAI about food, diet plans, protein, or recipes..." />
+              <button class="send-circle-btn" onclick="handleSendMessage()" title="Send Message">➤</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: MEALS TRACKER -->
+      <section class="tab-content" id="tab-meals">
+        <div class="tracker-date-bar">
+          <div class="date-controls">
+            <label for="trackerDateInput" style="font-weight: 600; color: var(--text-muted);">Tracking Date:</label>
+            <input type="date" id="trackerDateInput" onchange="handleTrackerDateChange(event)" />
+          </div>
+          <div style="font-size: 0.95rem; color: var(--text-muted);">
+            Daily Total: <strong id="trackerTotalCalories" style="color: var(--color-primary); font-size: 1.1rem;">0</strong> / <span id="trackerCalorieTarget">2000</span> kcal
+            (P: <span id="trackerProtein">0g</span> | C: <span id="trackerCarbs">0g</span> | F: <span id="trackerFat">0g</span>)
+          </div>
+        </div>
+
+        <!-- Add Meal Card -->
+        <div class="add-meal-card">
+          <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">+ Add Food Entry</h3>
+          
+          <div style="margin-bottom: 1rem;">
+            <select id="foodSelect" onchange="handleFoodSelectionChange()" style="width: 100%; padding: 0.65rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-main); border-radius: var(--radius-sm);">
+              <option value="">-- Choose from Verified Food Dataset (Optional) --</option>
+            </select>
+          </div>
+
+          <form id="addMealForm">
+            <div class="form-grid-row">
+              <div class="form-group">
+                <label>Food Item Name</label>
+                <input type="text" id="mealFoodName" placeholder="e.g. Roti, Paneer, Dal" required />
+              </div>
+
+              <div class="form-group">
+                <label>Meal Category</label>
+                <select id="mealCategory" required>
+                  <option value="breakfast">🥣 Breakfast</option>
+                  <option value="lunch">🍛 Lunch</option>
+                  <option value="snack">☕ Evening Snack</option>
+                  <option value="dinner">🌙 Dinner</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Serving</label>
+                <input type="number" id="mealServing" step="0.1" value="1.0" min="0.1" required />
+              </div>
+
+              <div class="form-group">
+                <label>Calories (kcal)</label>
+                <input type="number" id="mealCalories" step="1" placeholder="0" min="0" required />
+              </div>
+
+              <div class="form-group">
+                <label>Protein (g)</label>
+                <input type="number" id="mealProtein" step="0.1" placeholder="0" min="0" />
+              </div>
+
+              <input type="hidden" id="mealCarbs" value="0" />
+              <input type="hidden" id="mealFat" value="0" />
+
+              <button type="submit" class="btn-primary" style="height: 42px;">Add Food</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Meal Category Breakdown Grid -->
+        <div class="meals-category-grid">
+          <div class="meal-cat-box">
+            <div class="meal-cat-header">
+              <h4>🥣 Breakfast</h4>
+            </div>
+            <div id="breakfastMealsList"></div>
+          </div>
+
+          <div class="meal-cat-box">
+            <div class="meal-cat-header">
+              <h4>🍛 Lunch</h4>
+            </div>
+            <div id="lunchMealsList"></div>
+          </div>
+
+          <div class="meal-cat-box">
+            <div class="meal-cat-header">
+              <h4>☕ Evening Snack</h4>
+            </div>
+            <div id="snackMealsList"></div>
+          </div>
+
+          <div class="meal-cat-box">
+            <div class="meal-cat-header">
+              <h4>🌙 Dinner</h4>
+            </div>
+            <div id="dinnerMealsList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: WATER & WEIGHT PROGRESS -->
+      <section class="tab-content" id="tab-progress">
+        <div class="tracker-columns">
+          <!-- Water Tracking Column -->
+          <div class="water-interactive-box">
+            <div style="font-size: 3rem;">💧</div>
+            <h3 style="margin-bottom: -0.5rem;">Daily Water Intake</h3>
+            <div style="font-size: 2.75rem; font-weight: 800; color: var(--color-accent);" id="waterProgressDisplay">0 ml</div>
+            <div style="color: var(--text-muted);" id="waterGlassesDisplay">0 of 10 glasses</div>
+
+            <div class="progress-track" style="height: 12px; width: 80%;">
+              <div class="progress-fill water" id="waterProgressBar" style="width: 0%;"></div>
+            </div>
+
+            <div class="water-quick-buttons">
+              <button class="btn-secondary" onclick="handleAddWater(250)">+ 250ml (1 Glass)</button>
+              <button class="btn-secondary" onclick="handleAddWater(500)">+ 500ml (Bottle)</button>
+              <button class="btn-secondary" style="color: var(--color-danger);" onclick="handleResetWater()">Reset Today</button>
+            </div>
+          </div>
+
+          <!-- Weight Tracking Column -->
+          <div class="weight-chart-container">
+            <h3 style="margin-bottom: 1rem;">⚖️ Weight Tracker & Progress Chart</h3>
+
+            <form id="addWeightForm" style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+              <input type="number" id="weightInput" step="0.1" placeholder="Weight in kg (e.g. 72.5)" style="flex: 1; padding: 0.6rem 0.9rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-main); border-radius: var(--radius-sm);" required />
+              <input type="text" id="weightNotes" placeholder="Notes (optional)" style="flex: 1; padding: 0.6rem 0.9rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-main); border-radius: var(--radius-sm);" />
+              <button type="submit" class="btn-primary">Log Weight</button>
+            </form>
+
+            <!-- SVG Line Chart -->
+            <svg class="svg-chart" id="weightSvgChart"></svg>
+
+            <!-- Historical Table -->
+            <h4 style="margin: 1.5rem 0 0.75rem; font-size: 0.95rem;">Recent Weight Entries</h4>
+            <div style="max-height: 180px; overflow-y: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+                <thead>
+                  <tr style="text-align: left; color: var(--text-dim); border-bottom: 1px solid var(--border-subtle);">
+                    <th style="padding: 0.5rem 0;">Date</th>
+                    <th style="padding: 0.5rem 0;">Weight</th>
+                    <th style="padding: 0.5rem 0;">Notes</th>
+                  </tr>
+                </thead>
+                <tbody id="weightHistoryBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: PROFILE & GOALS -->
+      <section class="tab-content" id="tab-profile">
+        <div class="dash-card" style="max-width: 700px; margin: 0 auto;">
+          <h3 style="margin-bottom: 0.5rem;">⚙️ Your Profile & Nutritional Goals</h3>
+          <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 1.5rem;">These parameters are directly injected into your AI nutritionist prompt and calibrate your dashboard targets.</p>
+
+          <form id="profileForm" style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label>Age (years)</label>
+                <input type="number" id="profAge" min="10" max="120" required />
+              </div>
+              <div class="form-group">
+                <label>Gender</label>
+                <select id="profGender">
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label>Height (cm)</label>
+                <input type="number" id="profHeight" step="0.5" required />
+              </div>
+              <div class="form-group">
+                <label>Current Weight (kg)</label>
+                <input type="number" id="profWeight" step="0.5" required />
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label>Activity Level</label>
+                <select id="profActivity">
+                  <option value="sedentary">Sedentary (Desk Job, Little Exercise)</option>
+                  <option value="lightly_active">Lightly Active (1-3 workout days/wk)</option>
+                  <option value="moderate">Moderately Active (3-5 workout days/wk)</option>
+                  <option value="very_active">Very Active (6-7 intense workout days/wk)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Primary Goal</label>
+                <select id="profGoal">
+                  <option value="fat_loss">Fat Loss</option>
+                  <option value="muscle_gain">Muscle Gain / Hypertrophy</option>
+                  <option value="healthy_lifestyle">Healthy Lifestyle Maintenance</option>
+                  <option value="athletic_performance">Athletic Performance</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label>Dietary Preference</label>
+                <select id="profDiet">
+                  <option value="vegetarian">Indian Vegetarian</option>
+                  <option value="eggetarian">Eggetarian</option>
+                  <option value="non_vegetarian">Non-Vegetarian</option>
+                  <option value="vegan">Vegan</option>
+                  <option value="jain">Jain Vegetarian</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Allergies / Dislikes</label>
+                <input type="text" id="profAllergies" placeholder="e.g. Peanuts, Dairy, Gluten" />
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label>Daily Calorie Target (kcal)</label>
+                <input type="number" id="profCalories" step="50" min="800" max="6000" required />
+              </div>
+              <div class="form-group">
+                <label>Daily Water Target (ml)</label>
+                <input type="number" id="profWater" step="100" min="500" max="10000" required />
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="align-self: flex-start; margin-top: 0.5rem;">Save Changes</button>
+          </form>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ======================================================================
+       AUTHENTICATION MODAL OVERLAY
+       ====================================================================== -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-card">
+      <button class="auth-close-btn" onclick="closeAuth()" aria-label="Close Auth Modal">×</button>
+
+      <div class="auth-tabs-toggle">
+        <button class="auth-tab-btn active" id="loginTabBtn" onclick="showLogin()">Login</button>
+        <button class="auth-tab-btn" id="signupTabBtn" onclick="showSignup()">Sign Up</button>
+      </div>
+
+      <div class="auth-error-banner" id="authErrorBanner"></div>
+
+      <!-- Login Form -->
+      <form class="auth-form" id="loginForm">
+        <h2 style="font-size: 1.4rem;">Welcome Back</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Sign in to access your consultations and health dashboard.</p>
+        
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Your password" required autocomplete="current-password" />
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 0.5rem;">Login</button>
+        <small style="color: var(--text-muted); text-align: center;">Don't have an account? <a href="javascript:void(0)" onclick="showSignup()" style="color: var(--color-primary); font-weight: 600;">Sign up</a></small>
+      </form>
+
+      <!-- Signup Form -->
+      <form class="auth-form hidden" id="signupForm">
+        <h2 style="font-size: 1.4rem;">Create Account</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Start your private AI nutrition journey with NutriAI.</p>
+
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" placeholder="Your Name" required autocomplete="name" />
+        </div>
+
+        <div class="form-group">
+          <label for="signupEmail">Email Address</label>
+          <input type="email" id="signupEmail" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="signupPassword">Create Password</label>
+          <input type="password" id="signupPassword" placeholder="Minimum 8 characters (letters & numbers)" required autocomplete="new-password" />
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 0.5rem;">Create Account</button>
+        <small style="color: var(--text-muted); text-align: center;">Already have an account? <a href="javascript:void(0)" onclick="showLogin()" style="color: var(--color-primary); font-weight: 600;">Login</a></small>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       FOOTER
+       ====================================================================== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <div class="logo" style="margin-bottom: 0.75rem;">Nutri<span>.ai</span><sup>®</sup></div>
+        <p style="font-size: 0.9rem; line-height: 1.6; max-width: 320px;">
+          Evidence-informed nutritional intelligence powered by local language models and verified food datasets.
+        </p>
+      </div>
+
+      <div>
+        <h4 style="color: var(--text-main); margin-bottom: 0.75rem;">Platform</h4>
+        <div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.88rem;">
+          <a href="#features">Features</a>
+          <a href="#faq">FAQ</a>
+          <a href="users.html">Admin Directory</a>
+        </div>
+      </div>
+
+      <div>
+        <h4 style="color: var(--text-main); margin-bottom: 0.75rem;">Security</h4>
+        <div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.88rem;">
+          <span>Argon2 Encryption</span>
+          <span>Local LLM Privacy</span>
+          <span>Zero Data Leakage</span>
+        </div>
+      </div>
+
+      <div>
+        <h4 style="color: var(--text-main); margin-bottom: 0.75rem;">Medical Disclaimer</h4>
+        <p style="font-size: 0.8rem; line-height: 1.5; color: var(--text-dim);">
+          NutriAI provides educational nutritional guidance. It does not provide medical diagnoses, treatment, or prescriptions. Always consult a certified healthcare professional for medical conditions.
+        </p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      © 2026 NutriAI Platform. All rights reserved. Built with FastAPI, SQLite & Ollama.
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

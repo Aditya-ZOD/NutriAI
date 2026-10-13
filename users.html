@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriAI — User Management (Admin Only)</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .admin-container {
+      max-width: 1000px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .users-table th, .users-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      text-align: left;
+    }
+    .users-table th {
+      background: var(--bg-surface-elevated);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .users-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .role-tag {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .role-admin {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--color-primary);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .role-user {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+    }
+    .error-card {
+      background: var(--bg-surface);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--radius-md);
+      padding: 2.5rem;
+      text-align: center;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">Nutri<span>.ai</span><sup>®</sup></div>
+    <div class="nav-actions">
+      <a href="index.html" class="btn-secondary">← Back to Platform</a>
+    </div>
+  </header>
+
+  <main class="admin-container">
+    <div class="admin-header">
+      <div>
+        <h1 style="font-size: 2rem; font-weight: 800;">Admin User Directory</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Protected administrative inspection of registered platform accounts.</p>
+      </div>
+      <button class="btn-primary" id="refreshBtn" onclick="loadAdminUsers()">Refresh</button>
+    </div>
+
+    <div id="statusContainer"></div>
+
+    <div id="tableWrapper" style="display: none;">
+      <table class="users-table" id="usersTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody id="usersTbody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE = window.location.origin;
+
+    async function loadAdminUsers() {
+      const statusContainer = document.getElementById("statusContainer");
+      const tableWrapper = document.getElementById("tableWrapper");
+      const tbody = document.getElementById("usersTbody");
+      const token = localStorage.getItem("nutri_token");
+
+      if (!token) {
+        tableWrapper.style.display = "none";
+        statusContainer.innerHTML = `
+          <div class="error-card">
+            <div style="font-size: 3rem; margin-bottom: 0.75rem;">🔒</div>
+            <h2 style="margin-bottom: 0.5rem;">Authentication Required</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">You must be logged in as an administrator to access the user directory.</p>
+            <a href="index.html" class="btn-primary">Return to Home / Login</a>
+          </div>
+        `;
+        return;
+      }
+
+      statusContainer.innerHTML = '<p style="color: var(--text-muted);">Verifying administrative privileges...</p>';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/users`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (res.status === 403) {
+          tableWrapper.style.display = "none";
+          statusContainer.innerHTML = `
+            <div class="error-card">
+              <div style="font-size: 3rem; margin-bottom: 0.75rem;">⛔</div>
+              <h2 style="margin-bottom: 0.5rem;">Access Denied (403 Forbidden)</h2>
+              <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Your account does not possess administrator privileges.</p>
+              <a href="index.html" class="btn-secondary">Return to Home</a>
+            </div>
+          `;
+          return;
+        }
+
+        if (!res.ok) {
+          throw new Error(`Server returned HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        statusContainer.innerHTML = `<p style="color: var(--color-primary); font-size: 0.9rem;">✓ Verified admin session: ${data.total} registered account(s) loaded.</p>`;
+        tableWrapper.style.display = "block";
+        tbody.innerHTML = "";
+
+        // Safe DOM rendering to prevent any HTML injection
+        data.users.forEach(user => {
+          const tr = document.createElement("tr");
+
+          const tdId = document.createElement("td");
+          tdId.textContent = user.id;
+
+          const tdName = document.createElement("td");
+          tdName.textContent = user.name || "N/A";
+          tdName.style.fontWeight = "600";
+
+          const tdEmail = document.createElement("td");
+          tdEmail.textContent = user.email || "";
+
+          const tdRole = document.createElement("td");
+          const roleSpan = document.createElement("span");
+          roleSpan.className = `role-tag ${user.role === "admin" ? "role-admin" : "role-user"}`;
+          roleSpan.textContent = user.role || "user";
+          tdRole.appendChild(roleSpan);
+
+          const tdDate = document.createElement("td");
+          tdDate.textContent = user.created_at ? user.created_at.slice(0, 10) : "-";
+          tdDate.style.color = "var(--text-dim)";
+
+          tr.appendChild(tdId);
+          tr.appendChild(tdName);
+          tr.appendChild(tdEmail);
+          tr.appendChild(tdRole);
+          tr.appendChild(tdDate);
+
+          tbody.appendChild(tr);
+        });
+
+      } catch (err) {
+        tableWrapper.style.display = "none";
+        statusContainer.innerHTML = `
+          <div class="error-card">
+            <h3>Error Loading Users</h3>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">${err.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadAdminUsers);
+  </script>
+</body>
+</html>
